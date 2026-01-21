@@ -1,4 +1,4 @@
-# 📘 GitHub README.md
+
 
 **Graphic Shop Workflow & Operations System (PHP + MySQL)**
 
