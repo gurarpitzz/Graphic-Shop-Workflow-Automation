@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphic Shop Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-box glass">
+            <h1><i class="fas fa-print"></i> Shop Ops</h1>
+            <form id="loginForm">
+                <input type="text" id="username" placeholder="Username / ID" required>
+                <input type="password" id="password" placeholder="Password" required>
+                
+                <!-- Simple Mock Captcha -->
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <span id="captchaText" class="glass" style="padding: 12px; font-family: monospace; letter-spacing: 5px; user-select: none;">1234</span>
+                    <input type="text" id="captchaInput" placeholder="Enter Code" style="margin-bottom: 0;" required>
+                </div>
+
+                <div id="loginError" style="color: var(--accent); margin-bottom: 15px; display: none;">Invalid Credentials</div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">LOGIN</button>
+            </form>
+            <p style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted);">System v1.0 | Setup Required</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Init Login Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const captcha = Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('captchaText').textContent = captcha;
+            
+            document.getElementById('loginForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const userCode = document.getElementById('captchaInput').value;
+                if(userCode != captcha) {
+                    alert('Invalid Captcha');
+                    return;
+                }
+                handleLogin(); // Defined in app.js
+            });
+        });
+    </script>
+</body>
+</html>

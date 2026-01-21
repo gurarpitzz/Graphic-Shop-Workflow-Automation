@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphic Shop - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="dashboard-body">
+
+    <nav class="sidebar glass">
+        <div class="logo">
+            <i class="fas fa-bolt"></i> G-SHOP
+        </div>
+        <ul class="nav-links">
+            <li class="active" id="nav-orders"><a href="#" onclick="showSection('orders')"><i
+                        class="fas fa-th-large"></i> Orders</a></li>
+            <li class="admin-only" id="nav-archive"><a href="#" onclick="showSection('archive')"><i
+                        class="fas fa-archive"></i> Archive</a></li>
+            <li class="admin-only" id="nav-customers"><a href="#" onclick="showSection('customers')"><i
+                        class="fas fa-users"></i> Customers</a></li>
+            <li class="admin-only" id="nav-workforce"><a href="#" onclick="showSection('workforce')"><i
+                        class="fas fa-id-card"></i> Workforce</a></li>
+            <li><a href="#" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="content-area">
+        <header class="top-bar glass">
+            <div id="workerGreeting" class="worker-prompt">
+                <h2 id="userNameDisplay">Hi Loading...</h2>
+                <p id="userRoleDisplay" class="role-badge"></p>
+                <p style="margin-top:10px; color:var(--text-muted);">Today this is your assigned work:</p>
+            </div>
+            <div class="admin-only" style="display:flex; gap:10px;">
+                <button class="btn btn-secondary" onclick="showDayReport()"><i class="fas fa-file-alt"></i> Day-End
+                    Report</button>
+                <button class="btn btn-primary" onclick="openOrderModal('new')"><i class="fas fa-plus"></i> New
+                    Order</button>
+            </div>
+        </header>
+
+        <!-- ORDERS SECTION -->
+        <section id="ordersSection" class="content-section">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; gap:15px;">
+                <h3 class="section-title">Active Operations</h3>
+                <div class="search-bar glass"
+                    style="flex:1; max-width:400px; display:flex; align-items:center; padding:5px 15px;">
+                    <i class="fas fa-search" style="color:var(--text-muted); margin-right:10px;"></i>
+                    <input type="text" id="orderSearch" placeholder="Search by ID, Phone, or Name..."
+                        onkeyup="handleSearch(this.value)"
+                        style="background:transparent; border:none; color:white; width:100%; outline:none; padding:8px 0;">
+                </div>
+                <div class="view-toggles">
+                    <button onclick="setView('grid')" class="btn-icon"><i class="fas fa-th"></i></button>
+                    <button onclick="setView('table')" class="btn-icon"><i class="fas fa-list"></i></button>
+                </div>
+            </div>
+            <div id="orderContent">
+                <div class="order-grid" id="orderGridContainer"></div>
+                <div id="orderTableContainer" class="hidden glass" style="padding:10px;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>IMG</th>
+                                <th>ORD-ID</th>
+                                <th>Customer</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th class="admin-accountant-only">Due</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ARCHIVE SECTION -->
+        <section id="archiveSection" class="content-section hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; gap:15px;">
+                <h3 class="section-title"><i class="fas fa-lock"></i> Digital Vault</h3>
+                <div class="search-bar glass"
+                    style="flex:1; max-width:400px; display:flex; align-items:center; padding:5px 15px;">
+                    <i class="fas fa-search" style="color:var(--text-muted); margin-right:10px;"></i>
+                    <input type="text" id="archiveSearch" placeholder="Search Vault by ID, Phone, or Name..."
+                        onkeyup="handleSearch(this.value)"
+                        style="background:transparent; border:none; color:white; width:100%; outline:none; padding:8px 0;">
+                </div>
+            </div>
+            <div class="glass" style="padding:20px;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ORD-ID</th>
+                            <th>Customer</th>
+                            <th>Project</th>
+                            <th>Closed Date</th>
+                            <th>Billing</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="archiveTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CUSTOMERS SECTION -->
+        <section id="customersSection" class="content-section hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; gap:15px;">
+                <h3 class="section-title">Customer Analysis</h3>
+                <div class="search-bar glass"
+                    style="flex:1; max-width:400px; display:flex; align-items:center; padding:5px 15px;">
+                    <i class="fas fa-search" style="color:var(--text-muted); margin-right:10px;"></i>
+                    <input type="text" id="customerSearch" placeholder="Search by Phone or Name..."
+                        onkeyup="handleCustomerSearch(this.value)"
+                        style="background:transparent; border:none; color:white; width:100%; outline:none; padding:8px 0;">
+                </div>
+            </div>
+            <div class="glass" style="padding:20px;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>CUST-ID</th>
+                            <th>Name</th>
+                            <th>Mobile</th>
+                            <th>Orders / Leads</th>
+                            <th>Quality Score</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerTableBody"></tbody>
+                </table>
+        </section>
+        <!-- WORKFORCE SECTION -->
+        <section id="workforceSection" class="content-section hidden">
+            <h3 class="section-title">Workforce Management</h3>
+
+            <div class="glass" style="padding:25px; margin-bottom:30px;">
+                <h4>Register New Employee</h4>
+                <div
+                    style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-top:15px;">
+                    <input type="text" id="newWorkerUser" placeholder="Username (e.g. bablu)" class="glass"
+                        style="padding:10px; border:1px solid var(--glass-border); color:white;">
+                    <select id="newWorkerRole" class="glass"
+                        style="padding:10px; border:1px solid var(--glass-border); color:white; background:#000;">
+                        <option value="worker">Worker</option>
+                        <option value="accountant">Accountant</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <div
+                        style="flex:1; padding:10px; border:1px solid var(--glass-border); border-radius:10px; background:rgba(0,0,0,0.2);">
+                        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Select Domains:
+                        </p>
+                        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+                            <label style="font-size:0.8rem; display:flex; align-items:center; gap:5px;"><input
+                                    type="checkbox" name="domain" value="Printing"> Printing</label>
+                            <label style="font-size:0.8rem; display:flex; align-items:center; gap:5px;"><input
+                                    type="checkbox" name="domain" value="Designing"> Designing</label>
+                            <label style="font-size:0.8rem; display:flex; align-items:center; gap:5px;"><input
+                                    type="checkbox" name="domain" value="Fabrication"> Fabrication</label>
+                            <label style="font-size:0.8rem; display:flex; align-items:center; gap:5px;"><input
+                                    type="checkbox" name="domain" value="Assembly"> Assembly</label>
+                            <label style="font-size:0.8rem; display:flex; align-items:center; gap:5px;"><input
+                                    type="checkbox" name="domain" value="Installation"> Installation</label>
+                            <label style="font-size:0.8rem; display:flex; align-items:center; gap:5px;"><input
+                                    type="checkbox" name="domain" value="Stamping"> Stamping</label>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addUser()">Add Employee</button>
+                </div>
+            </div>
+
+            <div class="glass" style="padding:20px;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Domains</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="workforceTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- ORDER MODAL -->
+    <div id="orderModal" class="modal glass-blur hidden">
+        <div class="modal-content glass large-modal">
+            <div class="modal-header">
+                <h3>Order: <span id="displayOrderID" style="color:var(--accent)">#ORD-ID</span></h3>
+                <div style="display:flex; gap:10px;">
+                    <button id="btnDelete" class="btn btn-secondary admin-accountant-only hidden"
+                        onclick="deleteOrder()"
+                        style="background:rgba(239, 68, 68, 0.1); color:#ef4444; border-color:#ef4444;">Delete</button>
+                    <button id="btnArchive" class="btn btn-secondary hidden" onclick="archiveOrder()">Move to
+                        Vault</button>
+                    <span class="close-btn" onclick="closeOrderModal()">&times;</span>
+                </div>
+            </div>
+
+            <div class="modal-tabs">
+                <button class="tab-btn active" onclick="switchTab('contact')">Contact</button>
+                <button class="tab-btn" onclick="switchTab('design')">Design</button>
+                <button class="tab-btn admin-accountant-only" onclick="switchTab('financial')">Financial</button>
+                <button class="tab-btn" onclick="switchTab('workflow')">Workflow</button>
+                <button class="tab-btn" onclick="switchTab('history')">Audit Trail</button>
+                <button class="tab-btn" onclick="switchTab('media')">Media Vault</button>
+            </div>
+
+            <div class="modal-scroll-area">
+                <div id="tab-contact" class="tab-content">
+                    <table class="modal-table">
+                        <tr>
+                            <th>Mobile No</th>
+                            <td><input type="text" id="inpMobile"></td>
+                        </tr>
+                        <tr>
+                            <th>Name</th>
+                            <td><input type="text" id="inpCustomer"></td>
+                        </tr>
+                        <tr>
+                            <th>WhatsApp</th>
+                            <td><input type="text" id="inpWA"></td>
+                        </tr>
+                        <tr>
+                            <th>Mail</th>
+                            <td><input type="text" id="inpMail"></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div id="tab-design" class="tab-content hidden">
+                    <table class="modal-table">
+                        <tr>
+                            <th>Description</th>
+                            <td><textarea id="inpDesc" rows="3"></textarea></td>
+                        </tr>
+                        <tr>
+                            <th>Material / Sizes</th>
+                            <td><input type="text" id="inpMaterial"> / <input type="text" id="inpSizes"></td>
+                        </tr>
+                        <tr>
+                            <th>Ref. Image</th>
+                            <td><input type="file" id="inpFile"></td>
+                        </tr>
+                        <tr>
+                            <th>Add Bills / Media</th>
+                            <td><input type="file" id="inpExtraMedia" multiple></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div id="tab-financial" class="tab-content hidden admin-accountant-only">
+                    <table class="modal-table">
+                        <tr>
+                            <th>Total Amt</th>
+                            <td><input type="number" id="inpTotal"></td>
+                        </tr>
+                        <tr>
+                            <th>Advance</th>
+                            <td><input type="number" id="inpAdvance"></td>
+                        </tr>
+                        <tr>
+                            <th>Due Remaining</th>
+                            <td><strong id="calcDue" style="color:var(--accent)">0.00</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Tally Bill No</th>
+                            <td><input type="text" id="inpBill"></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div id="tab-workflow" class="tab-content hidden">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th>Milestone</th>
+                                <th>Responsible</th>
+                                <th>Schedules</th>
+                                <th>Req.</th>
+                                <th>Done</th>
+                            </tr>
+                        </thead>
+                        <tbody id="milestoneRows"></tbody>
+                    </table>
+                </div>
+
+                <div id="tab-history" class="tab-content hidden">
+                    <h4 class="modal-section-title">Order Timeline (Who & When)</h4>
+                    <div id="auditTrailContent"></div>
+                </div>
+
+                <div id="tab-media" class="tab-content hidden">
+                    <h4 class="modal-section-title">Attached Work & Bills</h4>
+                    <div class="media-grid" id="mediaGallery"></div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeOrderModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveOrder()">Update Record</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', initDashboard);</script>
+</body>
+
+</html>
