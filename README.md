@@ -1,6 +1,6 @@
 
 
-**Graphic Shop Workflow & Operations System (PHP + MySQL)**
+# **Graphic Shop Workflow & Operations System (PHP + MySQL)**
 
 ---
 
